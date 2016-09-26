@@ -191,7 +191,7 @@ func (c doubleDeltaEncodedChunk) Clone() Chunk {
 	return &clone
 }
 
-// firstTime implements chunk.
+// FirstTime implements chunk.
 func (c doubleDeltaEncodedChunk) FirstTime() model.Time {
 	return c.baseTime()
 }

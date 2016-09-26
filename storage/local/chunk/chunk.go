@@ -78,28 +78,28 @@ const (
 // here is an overview and general explanation:
 //
 // Everything that changes the pinning of the underlying chunk or deals with its
-// eviction is protected by a mutex. This affects the following methods: pin,
-// unpin, refCount, isEvicted, MaybeEvict. These methods can be called at any
+// eviction is protected by a mutex. This affects the following methods: Pin,
+// Unpin, RefCount, IsEvicted, MaybeEvict. These methods can be called at any
 // time without further prerequisites.
 //
 // Another group of methods acts on (or sets) the underlying chunk. These
 // methods involve no locking. They may only be called if the caller has pinned
 // the chunk (to guarantee the chunk is not evicted concurrently). Also, the
 // caller must make sure nobody else will call these methods concurrently,
-// either by holding the sole reference to the chunkDesc (usually during loading
-// or creation) or by locking the fingerprint of the series the chunkDesc
-// belongs to. The affected methods are: add, maybePopulateLastTime, setChunk.
+// either by holding the sole reference to the ChunkDesc (usually during loading
+// or creation) or by locking the fingerprint of the series the ChunkDesc
+// belongs to. The affected methods are: Add, MaybePopulateLastTime, SetChunk.
 //
-// Finally, there are the special cases firstTime and lastTime. lastTime requires
+// Finally, there are the special cases FirstTime and LastTime. LastTime requires
 // to have locked the fingerprint of the series but the chunk does not need to
-// be pinned. That's because the ChunkLastTime field in chunkDesc gets populated
+// be pinned. That's because the ChunkLastTime field in ChunkDesc gets populated
 // upon completion of the chunk (when it is still pinned, and which happens
 // while the series's fingerprint is locked). Once that has happened, calling
-// lastTime does not require the chunk to be loaded anymore. Before that has
-// happened, the chunk is pinned anyway. The ChunkFirstTime field in chunkDesc
-// is populated upon creation of a chunkDesc, so it is alway safe to call
-// firstTime. The firstTime method is arguably not needed and only there for
-// consistency with lastTime.
+// LastTime does not require the chunk to be loaded anymore. Before that has
+// happened, the chunk is pinned anyway. The ChunkFirstTime field in ChunkDesc
+// is populated upon creation of a ChunkDesc, so it is alway safe to call
+// FirstTime. The FirstTime method is arguably not needed and only there for
+// consistency with LastTime.
 type ChunkDesc struct {
 	sync.Mutex           // Protects pinning.
 	C              Chunk // nil if chunk is evicted.
@@ -107,15 +107,15 @@ type ChunkDesc struct {
 	ChunkFirstTime model.Time // Populated at creation. Immutable.
 	ChunkLastTime  model.Time // Populated on closing of the chunk, model.Earliest if unset.
 
-	// evictListElement is nil if the chunk is not in the evict list.
-	// evictListElement is _not_ protected by the chunkDesc mutex.
+	// EvictListElement is nil if the chunk is not in the evict list.
+	// EvictListElement is _not_ protected by the ChunkDesc mutex.
 	// It must only be touched by the evict list handler in MemorySeriesStorage.
 	EvictListElement *list.Element
 }
 
-// NewChunkDesc creates a new chunkDesc pointing to the provided chunk. The
+// NewChunkDesc creates a new ChunkDesc pointing to the provided chunk. The
 // provided chunk is assumed to be not persisted yet. Therefore, the refCount of
-// the new chunkDesc is 1 (preventing eviction prior to persisting).
+// the new ChunkDesc is 1 (preventing eviction prior to persisting).
 func NewChunkDesc(c Chunk, firstTime model.Time) *ChunkDesc {
 	return &ChunkDesc{
 		C:              c,
@@ -133,7 +133,7 @@ func (cd *ChunkDesc) Add(s model.SamplePair) ([]Chunk, error) {
 }
 
 // Pin increments the refCount by one. Upon increment from 0 to 1, this
-// chunkDesc is removed from the evict list. To enable the latter, the
+// ChunkDesc is removed from the evict list. To enable the latter, the
 // evictRequests channel has to be provided. This method can be called
 // concurrently at any time.
 func (cd *ChunkDesc) Pin(evictRequests chan<- EvictRequest) {
@@ -148,7 +148,7 @@ func (cd *ChunkDesc) Pin(evictRequests chan<- EvictRequest) {
 }
 
 // Unpin decrements the refCount by one. Upon decrement from 1 to 0, this
-// chunkDesc is added to the evict list. To enable the latter, the evictRequests
+// ChunkDesc is added to the evict list. To enable the latter, the evictRequests
 // channel has to be provided. This method can be called concurrently at any
 // time.
 func (cd *ChunkDesc) Unpin(evictRequests chan<- EvictRequest) {
@@ -177,7 +177,7 @@ func (cd *ChunkDesc) RefCount() int {
 // FirstTime returns the timestamp of the first sample in the chunk. This method
 // can be called concurrently at any time. It only returns the immutable
 // cd.ChunkFirstTime without any locking. Arguably, this method is
-// useless. However, it provides consistency with the lastTime method.
+// useless. However, it provides consistency with the LastTime method.
 func (cd *ChunkDesc) FirstTime() model.Time {
 	return cd.ChunkFirstTime
 }
@@ -222,7 +222,7 @@ func (cd *ChunkDesc) IsEvicted() bool {
 
 // SetChunk sets the underlying chunk. The caller must have locked the
 // fingerprint of the series and must have "pre-pinned" the chunk (i.e. first
-// call pin and then set the chunk).
+// call Pin and then set the chunk).
 func (cd *ChunkDesc) SetChunk(c Chunk) {
 	if cd.C != nil {
 		panic("chunk already set")
@@ -283,7 +283,7 @@ type ChunkIterator interface {
 	// Scans the next value in the chunk. Directly after the iterator has
 	// been created, the next value is the first value in the
 	// chunk. Otherwise, it is the value following the last value scanned or
-	// found (by one of the find... methods). Returns false if either the
+	// found (by one of the Find... methods). Returns false if either the
 	// end of the chunk is reached or an error has occurred.
 	Scan() bool
 	// Finds the most recent value at or before the provided time. Returns

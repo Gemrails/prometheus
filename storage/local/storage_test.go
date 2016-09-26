@@ -1402,7 +1402,7 @@ func testEvictAndLoadChunkDescs(t *testing.T, encoding chunk.Encoding) {
 	s.maintainMemorySeries(fp, 0)
 	// Give the evict goroutine an opportunity to run.
 	time.Sleep(250 * time.Millisecond)
-	// Maintain series again to trigger chunkDesc eviction
+	// Maintain series again to trigger ChunkDesc eviction
 	s.maintainMemorySeries(fp, 0)
 
 	if oldLen <= len(series.chunkDescs) {
@@ -1422,7 +1422,7 @@ func testEvictAndLoadChunkDescs(t *testing.T, encoding chunk.Encoding) {
 	s.maintainMemorySeries(fp, 100000)
 
 	if len(series.chunkDescs) != 1 {
-		t.Errorf("Expected exactly one chunkDesc left, got %d.", len(series.chunkDescs))
+		t.Errorf("Expected exactly one ChunkDesc left, got %d.", len(series.chunkDescs))
 	}
 }
 

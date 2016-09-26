@@ -25,9 +25,9 @@ import (
 )
 
 const (
-	// chunkDescEvictionFactor is a factor used for chunkDesc eviction (as opposed
+	// chunkDescEvictionFactor is a factor used for ChunkDesc eviction (as opposed
 	// to evictions of chunks, see method evictOlderThan. A chunk takes about 20x
-	// more memory than a chunkDesc. With a chunkDescEvictionFactor of 10, not more
+	// more memory than a ChunkDesc. With a chunkDescEvictionFactor of 10, not more
 	// than a third of the total memory taken by a series will be used for
 	// chunkDescs.
 	chunkDescEvictionFactor = 10
@@ -140,7 +140,7 @@ type memorySeries struct {
 	metric model.Metric
 	// Sorted by start time, overlapping chunk ranges are forbidden.
 	chunkDescs []*chunk.ChunkDesc
-	// The index (within chunkDescs above) of the first chunkDesc that
+	// The index (within chunkDescs above) of the first ChunkDesc that
 	// points to a non-persisted chunk. If all chunks are persisted, then
 	// persistWatermark == len(chunkDescs).
 	persistWatermark int
@@ -150,7 +150,7 @@ type memorySeries struct {
 	// The chunkDescs in memory might not have all the chunkDescs for the
 	// chunks that are persisted to disk. The missing chunkDescs are all
 	// contiguous and at the tail end. chunkDescsOffset is the index of the
-	// chunk on disk that corresponds to the first chunkDesc in memory. If
+	// chunk on disk that corresponds to the first ChunkDesc in memory. If
 	// it is 0, the chunkDescs are all loaded. A value of -1 denotes a
 	// special case: There are chunks on disk, but the offset to the
 	// chunkDescs in memory is unknown. Also, in this special case, there is
@@ -159,7 +159,7 @@ type memorySeries struct {
 	// set).
 	chunkDescsOffset int
 	// The savedFirstTime field is used as a fallback when the
-	// chunkDescsOffset is not 0. It can be used to save the firstTime of the
+	// chunkDescsOffset is not 0. It can be used to save the FirstTime of the
 	// first chunk before its chunk desc is evicted. In doubt, this field is
 	// just set to the oldest possible timestamp.
 	savedFirstTime model.Time

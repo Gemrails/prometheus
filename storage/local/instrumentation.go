@@ -65,7 +65,7 @@ const (
 	failedQuarantine   = "quarantine_failed"
 
 	// Op-types for chunkOps.
-	createAndPin    = "create" // A chunkDesc creation with refCount=1.
+	createAndPin    = "create" // A ChunkDesc creation with refCount=1.
 	persistAndUnpin = "persist"
 	pin             = "pin"   // Excluding the pin on creation.
 	unpin           = "unpin" // Excluding the unpin on persisting.

@@ -510,10 +510,10 @@ func testCheckpointAndLoadSeriesMapAndHeads(t *testing.T, encoding chunk.Encodin
 			t.Error("headChunkClosed is true")
 		}
 		if loadedS1.head().ChunkFirstTime != 1 {
-			t.Errorf("want chunkFirstTime in head chunk to be 1, got %d", loadedS1.head().ChunkFirstTime)
+			t.Errorf("want ChunkFirstTime in head chunk to be 1, got %d", loadedS1.head().ChunkFirstTime)
 		}
 		if loadedS1.head().ChunkLastTime != model.Earliest {
-			t.Error("want chunkLastTime in head chunk to be unset")
+			t.Error("want ChunkLastTime in head chunk to be unset")
 		}
 	} else {
 		t.Errorf("couldn't find %v in loaded map", m1)
@@ -532,10 +532,10 @@ func testCheckpointAndLoadSeriesMapAndHeads(t *testing.T, encoding chunk.Encodin
 			t.Error("headChunkClosed is false")
 		}
 		if loadedS3.head().ChunkFirstTime != 2 {
-			t.Errorf("want chunkFirstTime in head chunk to be 2, got %d", loadedS3.head().ChunkFirstTime)
+			t.Errorf("want ChunkFirstTime in head chunk to be 2, got %d", loadedS3.head().ChunkFirstTime)
 		}
 		if loadedS3.head().ChunkLastTime != 2 {
-			t.Errorf("want chunkLastTime in head chunk to be 2, got %d", loadedS3.head().ChunkLastTime)
+			t.Errorf("want ChunkLastTime in head chunk to be 2, got %d", loadedS3.head().ChunkLastTime)
 		}
 	} else {
 		t.Errorf("couldn't find %v in loaded map", m3)
@@ -565,14 +565,14 @@ func testCheckpointAndLoadSeriesMapAndHeads(t *testing.T, encoding chunk.Encodin
 		for i, cd := range loadedS4.chunkDescs {
 			if cd.ChunkFirstTime != cd.C.FirstTime() {
 				t.Errorf(
-					"chunkDesc[%d]: chunkFirstTime not consistent with chunk, want %d, got %d",
+					"ChunkDesc[%d]: ChunkFirstTime not consistent with chunk, want %d, got %d",
 					i, cd.C.FirstTime(), cd.ChunkFirstTime,
 				)
 			}
 			if i == len(loadedS4.chunkDescs)-1 {
 				// Head chunk.
 				if cd.ChunkLastTime != model.Earliest {
-					t.Error("want chunkLastTime in head chunk to be unset")
+					t.Error("want ChunkLastTime in head chunk to be unset")
 				}
 				continue
 			}
@@ -582,7 +582,7 @@ func testCheckpointAndLoadSeriesMapAndHeads(t *testing.T, encoding chunk.Encodin
 			}
 			if cd.ChunkLastTime != lastTime {
 				t.Errorf(
-					"chunkDesc[%d]: chunkLastTime not consistent with chunk, want %d, got %d",
+					"ChunkDesc[%d]: ChunkLastTime not consistent with chunk, want %d, got %d",
 					i, lastTime, cd.ChunkLastTime,
 				)
 			}
@@ -616,20 +616,20 @@ func testCheckpointAndLoadSeriesMapAndHeads(t *testing.T, encoding chunk.Encodin
 			if i < 3 {
 				// Evicted chunks.
 				if cd.ChunkFirstTime == model.Earliest {
-					t.Errorf("chunkDesc[%d]: chunkLastTime not set", i)
+					t.Errorf("ChunkDesc[%d]: ChunkLastTime not set", i)
 				}
 				continue
 			}
 			if cd.ChunkFirstTime != cd.C.FirstTime() {
 				t.Errorf(
-					"chunkDesc[%d]: chunkFirstTime not consistent with chunk, want %d, got %d",
+					"ChunkDesc[%d]: ChunkFirstTime not consistent with chunk, want %d, got %d",
 					i, cd.C.FirstTime(), cd.ChunkFirstTime,
 				)
 			}
 			if i == len(loadedS5.chunkDescs)-1 {
 				// Head chunk.
 				if cd.ChunkLastTime != model.Earliest {
-					t.Error("want chunkLastTime in head chunk to be unset")
+					t.Error("want ChunkLastTime in head chunk to be unset")
 				}
 				continue
 			}
@@ -639,7 +639,7 @@ func testCheckpointAndLoadSeriesMapAndHeads(t *testing.T, encoding chunk.Encodin
 			}
 			if cd.ChunkLastTime != lastTime {
 				t.Errorf(
-					"chunkDesc[%d]: chunkLastTime not consistent with chunk, want %d, got %d",
+					"ChunkDesc[%d]: ChunkLastTime not consistent with chunk, want %d, got %d",
 					i, cd.ChunkLastTime, lastTime,
 				)
 			}

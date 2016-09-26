@@ -989,7 +989,7 @@ func (s *MemorySeriesStorage) maybeEvict() {
 	// remove the chunk from the evict list) to the evictRequests
 	// channel. The send blocks because evictRequests is full. However, the
 	// goroutine that is supposed to empty the channel is waiting for the
-	// chunkDesc lock to try to evict the chunk.
+	// ChunkDesc lock to try to evict the chunk.
 	go func() {
 		for _, cd := range chunkDescsToEvict {
 			if cd == nil {
@@ -1277,7 +1277,7 @@ func (s *MemorySeriesStorage) maintainMemorySeries(
 		}
 		return
 	}
-	// If we are here, the series is not archived, so check for chunkDesc
+	// If we are here, the series is not archived, so check for ChunkDesc
 	// eviction next.
 	series.evictChunkDescs(iOldestNotEvicted)
 
